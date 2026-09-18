@@ -38,7 +38,8 @@ add_library(classifier::classifier_core ALIAS classifier_core)
 # Target-scoped include directories: consumers automatically get <classifier/...>
 target_include_directories(classifier_core
   PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>$<INSTALL_INTERFACE:include>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
   PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include/3rdparty
 )
