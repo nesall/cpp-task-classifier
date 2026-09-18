@@ -97,7 +97,7 @@ int main(int argc, char *argv[]) {
   tok_opts.preserve_operators = true;
 
   ClassificationThresholds thresholds;
-  thresholds.tier3_margin = 0.08f;
+  thresholds.tier3_margin = 0.12f;
   thresholds.tier2_margin = 0.05f;
   thresholds.min_t3_prob = 0.30f;
   thresholds.min_t2_prob = 0.35f;

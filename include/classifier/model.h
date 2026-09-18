@@ -14,7 +14,7 @@ namespace classifier {
   class IClassifier {
   public:
     virtual ~IClassifier() = default;
-    [[nodiscard]] virtual ClassificationResult classify(std::string_view text) const = 0;
+    [[nodiscard]] virtual ClassificationResult classify(std::string_view text, Tier sesson_ctx = Tier::Unknown) const = 0;
   };
 
   struct ClassificationThresholds {
@@ -57,7 +57,7 @@ namespace classifier {
     void set_thresholds(ClassificationThresholds thresholds) noexcept { thresholds_ = thresholds; }
     [[nodiscard]] const ClassificationThresholds &thresholds() const noexcept { return thresholds_; }
 
-    [[nodiscard]] ClassificationResult classify(std::string_view text) const override;
+    [[nodiscard]] ClassificationResult classify(std::string_view text, Tier sesson_ctx = Tier::Unknown) const override;
 
     void fit(
       const std::vector<std::string> &texts,

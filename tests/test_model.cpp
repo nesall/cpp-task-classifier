@@ -17,8 +17,8 @@ bool test_embedded_classifier_pipeline() {
   std::vector<Tier> labels = {
       Tier::Tier1Simple,
       Tier::Tier1Simple,
-      Tier::Tier2Refactor,
-      Tier::Tier2Refactor,
+      Tier::Tier2Medium,
+      Tier::Tier2Medium,
       Tier::Tier3Complex,
       Tier::Tier3Complex
   };

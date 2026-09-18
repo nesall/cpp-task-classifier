@@ -47,7 +47,7 @@ bool test_logistic_gradient_check() {
   };
   std::vector<Tier> y = {
       Tier::Tier1Simple,
-      Tier::Tier2Refactor,
+      Tier::Tier2Medium,
       Tier::Tier3Complex
   };
 
@@ -100,7 +100,7 @@ bool test_logistic_overfitting_toy_data() {
   };
   std::vector<Tier> y = {
       Tier::Tier1Simple, Tier::Tier1Simple,
-      Tier::Tier2Refactor, Tier::Tier2Refactor,
+      Tier::Tier2Medium, Tier::Tier2Medium,
       Tier::Tier3Complex, Tier::Tier3Complex
   };
 

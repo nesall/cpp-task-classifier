@@ -19,11 +19,10 @@ REPORT_DIR = QUERY_DIR / "quality_report"
 OUT_DIR = DATA_DIR / "processed"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
-# 1. Load combined_all.jsonl
-combined_file = QUERY_DIR / "combined_all.jsonl"
+combined_file = QUERY_DIR / "combined_all_v2.jsonl"
 if not combined_file.exists():
     # Fallback to local root or data/ if path differs
-    combined_file = Path("combined_all.jsonl")
+    combined_file = Path("combined_all_v2.jsonl")
 
 print(f"Loading raw dataset from: {combined_file}")
 records = []
@@ -53,7 +52,7 @@ if cross_file.exists():
 
     drop_ids = set()
     concurrency_re = re.compile(
-        r"(lock-free|concurren|atomic|mutex|deadlock|race condition|compare-and-swap|spurious wakeup|hazard pointer|memory_order|thread|park)",
+        r"(lock|unlock|concurren|atomic|mutex|deadlock|race|races|compare-and-swap|spurious wakeup|hazard pointer|memory_order|thread|threads|park|spin|retry loop)",
         re.IGNORECASE
     )
 
@@ -98,6 +97,10 @@ if sim_file.exists():
     df = df[~df["id"].isin(sim_drop_ids)].copy()
     print(f"Removed {len(sim_drop_ids)} high-similarity near-clones. Retained: {len(df)} rows.")
 
+# Filter out any malformed / ERROR labels first
+valid_labels = {"TIER_1_SIMPLE", "TIER_2_MEDIUM", "TIER_3_COMPLEX"}
+df = df[df["label"].isin(valid_labels)].copy()
+
 # 4. Final Class Distribution Check
 print("\nReconciled Class Distribution:")
 counts = df["label"].value_counts()
@@ -105,15 +108,15 @@ for lbl, c in counts.items():
     print(f"  {lbl:20s}: {c:5d} ({100.0 * c / len(df):.1f}%)")
 
 # 5. Balance Classes and Create 70 / 15 / 15 Splits
-# Determine per-class sample size (cap to avoid severe imbalance)
-min_class = counts.min()
-target_per_class = min(min_class, 1600)  # Use up to 1,600 samples per class
+# TIER_2_MEDIUM is the bottleneck at 1,741 samples
+target_per_class = min(counts.min(), 1740)
 print(f"\nSampling {target_per_class} per class for a balanced dataset of {target_per_class * 3} samples...")
 
 balanced_dfs = []
 for lbl in ["TIER_1_SIMPLE", "TIER_2_MEDIUM", "TIER_3_COMPLEX"]:
     tier_subset = df[df["label"] == lbl].sample(n=target_per_class, random_state=42)
     balanced_dfs.append(tier_subset)
+
 
 clean_pool = pd.concat(balanced_dfs).sample(frac=1.0, random_state=42).reset_index(drop=True)
 

@@ -1,0 +1,35 @@
+Generate 100 distinct programming complex queries for an AI coding assistant.
+Label: [TIER_3_COMPLEX]
+Domain: [Multithreading / Concurrency]
+Persona: [Frustrated senior developer]
+Constraints: Use first-person narrative ("I have a bug..." or "Let's tackle this issue..." or "I think ..." or something else). Do not use the words 'design', 'diagnose', or 'complex'. 
+Output: Strictly valid JSON Lines with keys "text" and "label".
+
+Generate 10 distinct programming questions for an AI coding assistant.
+TIER_3_COMPLEX means: the question cannot be answered with a snippet or a
+single-function fix. It requires reasoning across multiple components, a
+non-obvious invariant, or a mathematical argument. A senior engineer would
+need at least 30 minutes of thinking or reading several files to answer.
+GOOD examples of TIER_3_COMPLEX:
+- "Our custom allocator occasionally returns overlapping regions under a
+  specific alignment pattern and I cannot reproduce it deterministically.
+  How do I even begin to find the invariant that is being violated?"
+- "I need to compute rolling percentiles over a sliding window of 10M
+  events per second without violating latency SLOs. What is the right
+  data structure and what are its accuracy guarantees?"
+NOT TIER_3_COMPLEX (do not generate questions like these):
+- "How do I use std::sort with a custom comparator?"
+- "What is the difference between a pointer and a reference?"
+TOPIC for this batch: fluid dynamics and physics simulation.
+REQUIREMENTS:
+- Persona: a frustrated senior developer, first-person ("I have a bug...",
+  "I'm trying to...", "We keep hitting...")
+- Length: 2–4 sentences per question
+- Do NOT use the words: design, diagnose, complex
+- Do NOT generate concurrency questions (no threads, locks, mutexes,
+  races, deadlocks, atomics, async)
+- Do NOT generate competitive-programming puzzle statements
+- Do NOT prefix with "Given an array" or "You are given"
+OUTPUT: strictly valid JSON Lines, one object per line, keys "text" and
+"label" (label is always "[TIER_3_COMPLEX]"). No prose, no markdown
+fences, no explanation before or after.

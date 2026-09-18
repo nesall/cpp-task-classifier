@@ -1,6 +1,7 @@
 #include "classifier/model.h"
 #include <fstream>
 #include <stdexcept>
+#include <algorithm>
 
 namespace classifier {
 
@@ -22,61 +23,8 @@ namespace classifier {
     tokenizer_ = std::make_unique<Tokenizer>(opts);
   }
 
-  //ClassificationResult EmbeddedClassifier::classify(std::string_view text) const {
-  //  if (vocab_.size() == 0 || lr_.num_features() == 0) {
-  //    return { Tier::Unknown, {0.0f, 0.0f, 0.0f}, 0.0f };
-  //  }
-
-  //  std::vector<std::string> tokens = tokenizer_->tokenize(text);
-  //  SparseVector x = tfidf_.transform(tokens, vocab_);
-
-  //  // Compute base linear logits: z_linear = W_linear * x + b
-  //  std::array<float, 3> logits = lr_.predict_raw_scores(x);
-
-  //  // Add non-linear residual logits: z = z_linear + z_residual
-  //  if (model_type_ == ModelType::ResidualMLP && mlp_.num_features() > 0) {
-  //    std::vector<float> hidden(mlp_.hidden_dim());
-  //    std::array<float, 3> res_logits;
-  //    mlp_.forward(x, hidden, res_logits);
-
-  //    logits[0] += res_logits[0];
-  //    logits[1] += res_logits[1];
-  //    logits[2] += res_logits[2];
-  //  }
-
-  //  // Softmax normalization
-  //  float max_logit = std::max({ logits[0], logits[1], logits[2] });
-  //  std::array<float, 3> exp_v{
-  //      std::exp(logits[0] - max_logit),
-  //      std::exp(logits[1] - max_logit),
-  //      std::exp(logits[2] - max_logit)
-  //  };
-  //  float s = exp_v[0] + exp_v[1] + exp_v[2];
-  //  float inv_s = 1.0f / s;
-  //  std::array<float, 3> probs{ exp_v[0] * inv_s, exp_v[1] * inv_s, exp_v[2] * inv_s };
-
-  //  // 1. Argmax baseline
-  //  size_t best_idx = 0;
-  //  float max_p = probs[0];
-  //  for (size_t k = 1; k < 3; ++k) {
-  //    if (probs[k] > max_p) {
-  //      max_p = probs[k];
-  //      best_idx = k;
-  //    }
-  //  }
-
-  //  Tier chosen_tier = static_cast<Tier>(best_idx);
-
-  //  // 2. Relative Margin Guardrails
-  //  if (best_idx != 2 && (max_p - probs[2]) <= thresholds_.tier3_margin && probs[2] >= thresholds_.min_t3_prob) {
-  //    chosen_tier = Tier::Tier3Complex;
-  //  } else if (best_idx == 0 && (max_p - probs[1]) <= thresholds_.tier2_margin && probs[1] >= thresholds_.min_t2_prob) {
-  //    chosen_tier = Tier::Tier2Refactor;
-  //  }
-
-  //  return { chosen_tier, probs, max_p };
-  //}
-  ClassificationResult EmbeddedClassifier::classify(std::string_view text) const {
+  ClassificationResult EmbeddedClassifier::classify(std::string_view text, Tier session_context) const
+  {
     if (vocab_.size() == 0) {
       return { Tier::Unknown, {0.0f, 0.0f, 0.0f}, 0.0f };
     }
@@ -84,16 +32,54 @@ namespace classifier {
     std::vector<std::string> tokens = tokenizer_->tokenize(text);
     SparseVector x = tfidf_.transform(tokens, vocab_);
 
-    std::array<float, 3> probs;
+    // 1. Get raw scores from the linear model
+    std::array<float, 3> logits = lr_.predict_raw_scores(x);
 
-    if (model_type_ == ModelType::Linear) {
-      probs = lr_.predict_proba(x);
-    } else {
-      // Pure MLP evaluation
-      probs = mlp_.predict_proba(x);
+    // 2a. Standalone Query Length Prior
+    float length_factor = std::clamp((static_cast<float>(tokens.size()) - 10.0f) / 40.0f, 0.0f, 1.0f);
+    logits[1] += 0.4f * length_factor;
+    logits[2] += 0.8f * length_factor;
+
+    // 2b. High-Priority Concurrency & Structural Root Check
+    // If explicit hard-boundary terms appear, suppress T1/T2 from overriding
+    static const std::array<std::string_view, 6> hard_t3_stems = {
+        "deadlock", "mutex", "thread-safe", "race condition", "atomic", "hazard pointer"
+    };
+    for (const auto &stem : hard_t3_stems) {
+      if (text.find(stem) != std::string_view::npos) {
+        logits[2] += 2.0f; // Direct priority nudge for undisputed concurrency keywords
+        break;
+      }
     }
 
-    // 1. Argmax baseline
+    // 2c. Syntax Lookup Guard (std:: or syntax questions should not climb to Tier 2/3)
+    if (text.find("std::") != std::string_view::npos &&
+      (text.rfind("What does", 0) == 0 || text.rfind("How do I", 0) == 0)) {
+      logits[0] += 1.2f; // Prioritize syntax lookup
+    }
+
+    // 2d. Session Context Inheritance (Decays as query gets longer)
+    if (session_context != Tier::Unknown) {
+      float context_weight = std::max(0.0f, 1.0f - (tokens.size() / 15.0f));
+      float context_boost = 2.5f * context_weight;
+
+      if (session_context == Tier::Tier1Simple) logits[0] += context_boost;
+      else if (session_context == Tier::Tier2Medium) logits[1] += context_boost;
+      else if (session_context == Tier::Tier3Complex) logits[2] += context_boost;
+    }
+
+    // 3. Standard Softmax
+    float max_logit = std::max({ logits[0], logits[1], logits[2] });
+    std::array<float, 3> exp_v{
+        std::exp(logits[0] - max_logit),
+        std::exp(logits[1] - max_logit),
+        std::exp(logits[2] - max_logit)
+    };
+    float s = exp_v[0] + exp_v[1] + exp_v[2];
+    float inv_s = 1.0f / s;
+    std::array<float, 3> probs{ exp_v[0] * inv_s, exp_v[1] * inv_s, exp_v[2] * inv_s };
+
+    // 4. Argmax baseline
     size_t best_idx = 0;
     float max_p = probs[0];
     for (size_t k = 1; k < 3; ++k) {
@@ -105,11 +91,11 @@ namespace classifier {
 
     Tier chosen_tier = static_cast<Tier>(best_idx);
 
-    // 2. Relative Margin Guardrails
+    // 5. Relative Margin Guardrails
     if (best_idx != 2 && (max_p - probs[2]) <= thresholds_.tier3_margin && probs[2] >= thresholds_.min_t3_prob) {
       chosen_tier = Tier::Tier3Complex;
     } else if (best_idx == 0 && (max_p - probs[1]) <= thresholds_.tier2_margin && probs[1] >= thresholds_.min_t2_prob) {
-      chosen_tier = Tier::Tier2Refactor;
+      chosen_tier = Tier::Tier2Medium;
     }
 
     return { chosen_tier, probs, max_p };
@@ -122,7 +108,8 @@ namespace classifier {
     uint32_t min_df,
     const TrainConfig &linear_config,
     const ResidualConfig &residual_config
-  ) {
+  )
+  {
     if (texts.empty() || texts.size() != labels.size()) return;
 
     // 1. Build vocabulary and tokenized corpus

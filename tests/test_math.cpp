@@ -9,8 +9,8 @@ static bool approx_equal(float a, float b, float eps = 1e-4f) {
 
 bool test_metrics_perfect_classification() {
   std::vector<Tier> truth = {
-      Tier::Tier1Simple, Tier::Tier2Refactor, Tier::Tier3Complex,
-      Tier::Tier1Simple, Tier::Tier2Refactor, Tier::Tier3Complex
+      Tier::Tier1Simple, Tier::Tier2Medium, Tier::Tier3Complex,
+      Tier::Tier1Simple, Tier::Tier2Medium, Tier::Tier3Complex
   };
   std::vector<Tier> preds = truth;
 
@@ -34,12 +34,12 @@ bool test_metrics_known_confusion_matrix() {
   // Pred: [T1, T2, T2, T3, T3, T3]
   std::vector<Tier> truth = {
       Tier::Tier1Simple, Tier::Tier1Simple,
-      Tier::Tier2Refactor, Tier::Tier2Refactor,
+      Tier::Tier2Medium, Tier::Tier2Medium,
       Tier::Tier3Complex, Tier::Tier3Complex
   };
   std::vector<Tier> preds = {
-      Tier::Tier1Simple, Tier::Tier2Refactor,
-      Tier::Tier2Refactor, Tier::Tier3Complex,
+      Tier::Tier1Simple, Tier::Tier2Medium,
+      Tier::Tier2Medium, Tier::Tier3Complex,
       Tier::Tier3Complex, Tier::Tier3Complex
   };
 

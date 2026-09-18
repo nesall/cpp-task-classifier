@@ -11,12 +11,22 @@ bin/
 tmp/
 temp/
 test/
-data/
 dist.*
 *.zip
 *.so
 *.dll
 *.dylib
+
+# Large datasets & scratch files
+data/processed/
+data/querying/*.jsonl
+data/querying/archive/
+data/querying/huggingface/
+data/querying/quality_report/
+data/querying/embeddings.npy
+
+# Keep benchmarks tracked
+!data/benchmarks/
 
 # IDE files
 .vscode/
@@ -77,11 +87,19 @@ lcov.info
 benchmarks/results/
 *.prof
 
+
 # Other files
 *.db
 *.index
 *.log
-*.bin
+
+# Python caches
+__pycache__/
+*.py[cod]
+.venv/
 
 combined_src.txt
+
+
+!models/baseline_v1.bin
 

@@ -1,0 +1,32 @@
+{"id":"real_01","label":"TIER_1_SIMPLE","text":"What does std::move do in C++?"}
+{"id":"real_02","label":"TIER_1_SIMPLE","text":"How do I check whether a std::string is empty?"}
+{"id":"real_03","label":"TIER_1_SIMPLE","text":"Write a C++ function that returns the maximum of two integers."}
+{"id":"real_04","label":"TIER_1_SIMPLE","text":"What is the difference between const int* and int* const?"}
+{"id":"real_05","label":"TIER_1_SIMPLE","text":"How do I iterate over a std::vector<int> using a range-based for loop?"}
+{"id":"real_06","label":"TIER_1_SIMPLE","text":"What does HTTP status code 404 mean?"}
+{"id":"real_07","label":"TIER_1_SIMPLE","text":"Write a PostgreSQL query that selects all users where age > 18."}
+{"id":"real_08","label":"TIER_1_SIMPLE","text":"How do I center a div horizontally using CSS?"}
+{"id":"real_09","label":"TIER_2_MEDIUM","text":"I have a C++ class split between Foo.h and Foo.cpp. I want to rename Foo::process() to Foo::execute() and update every caller. What changes do I need to make?"}
+{"id":"real_10","label":"TIER_2_MEDIUM","text":"My Node.js API returns HTTP 500 when a user submits an empty email address. Find the likely problem and suggest the fix."}
+{"id":"real_11","label":"TIER_2_MEDIUM","text":"Refactor this C++ function into two functions: one responsible for parsing the input and another responsible for validating it."}
+{"id":"real_12","label":"TIER_2_MEDIUM","text":"I changed a PostgreSQL table by renaming a column, and now several queries in my application are failing. How should I systematically update the affected code?"}
+{"id":"real_13","label":"TIER_2_MEDIUM","text":"My Svelte component has three different places that independently fetch the same user data. Refactor it so the data is fetched once and shared between the components."}
+{"id":"real_14","label":"TIER_2_MEDIUM","text":"A C++ program has a memory leak somewhere across several classes using raw pointers. How would you approach finding and fixing it?"}
+{"id":"real_15","label":"TIER_2_MEDIUM","text":"I have five C++ files implementing a small feature. I want to replace the current logging calls with a new Logger class. What files and code would likely need to change?"}
+{"id":"real_16","label":"TIER_3_COMPLEX","text":"I have a multithreaded C++ application where two worker threads occasionally deadlock, but the deadlock cannot be reproduced reliably. Analyze how you would diagnose the lock ordering problem and redesign the synchronization to eliminate the possibility of deadlock."}
+{"id":"real_17","label":"TIER_3_COMPLEX","text":"Design a lock-free multi-producer, multi-consumer queue in C++ using atomics. Explain the memory-ordering requirements and the ABA problem."}
+{"id":"real_18","label":"TIER_3_COMPLEX","text":"I need to redesign my C++ application so that plugins can be loaded dynamically at runtime without the core application depending on concrete plugin implementations. Design the architecture and explain the ownership and ABI boundaries."}
+{"id":"real_19","label":"TIER_3_COMPLEX","text":"My neural-network training becomes unstable only after several thousand iterations. The loss sometimes explodes to infinity and then becomes NaN. Develop a systematic diagnosis covering gradients, initialization, learning rate, floating-point behavior, and optimizer state."}
+{"id":"real_20","label":"TIER_3_COMPLEX","text":"Design an algorithm for detecting cycles in a directed graph where the graph may contain millions of nodes and edges. Compare the possible approaches in terms of time, memory, and parallelization."}
+{"id":"real_21","label":"TIER_3_COMPLEX","text":"I need a thread-safe cache supporting concurrent reads and writes, bounded memory, LRU eviction, and asynchronous refresh without blocking readers. Design the architecture and synchronization strategy."}
+{"id":"real_22","label":"TIER_3_COMPLEX","text":"Design a C++ memory allocator optimized for millions of small allocations from multiple threads. Explain the data structures, synchronization strategy, fragmentation behavior, and tradeoffs."}
+{"id":"real_23","label":"TIER_3_COMPLEX","text":"My application occasionally produces corrupted data even though ThreadSanitizer reports no data races. Develop a systematic investigation strategy for finding possible memory-ordering, lifetime, undefined-behavior, and cache-coherency-related problems."}
+{"id":"real_24","label":"TIER_1_SIMPLE","text":"Fix this C++ segmentation fault. The crash occurs when processing an empty vector. The relevant function is about 20 lines long."}
+{"id":"real_25","label":"TIER_2_MEDIUM","text":"I have a C++ function that has grown to 200 lines. Refactor it into smaller functions while preserving its behavior."}
+{"id":"real_26","label":"TIER_3_COMPLEX","text":"My application has a race condition between two threads accessing a shared std::unordered_map. How should I fix it?"}
+{"id":"real_27","label":"TIER_2_MEDIUM","text":"I need to change the API of a C++ class used by 12 other classes. How should I approach the refactoring?"}
+{"id":"real_28","label":"TIER_2_MEDIUM","text":"Implement a binary search tree in C++ that supports insertion, deletion, and lookup."}
+{"id":"real_29","label":"TIER_3_COMPLEX","text":"Implement a thread-safe singleton in modern C++."}
+{"id":"real_30","label":"TIER_3_COMPLEX","text":"My C++ application has a deadlock caused by two mutexes being acquired in different orders. How should I fix it?"}
+{"id":"real_31","label":"TIER_2_MEDIUM","text":"Optimize this SQL query that joins four tables and takes 8 seconds to execute."}
+{"id":"real_32","label":"TIER_3_COMPLEX","text":"I need to convert a synchronous Node.js API to asynchronous processing using a job queue. What architectural changes are required?"}

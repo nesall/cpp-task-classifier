@@ -1,0 +1,32 @@
+{"id":"b01_01","text":"What does std::move do in C++?","label":"TIER_1_SIMPLE"}
+{"id":"b01_02","text":"How do I check whether a std::string is empty?","label":"TIER_1_SIMPLE"}
+{"id":"b01_03","text":"Write a C++ function that returns the maximum of two integers.","label":"TIER_1_SIMPLE"}
+{"id":"b01_04","text":"What does HTTP 404 mean?","label":"TIER_1_SIMPLE"}
+{"id":"b01_05","text":"How do I declare a pointer to an integer in C?","label":"TIER_1_SIMPLE"}
+{"id":"b01_06","text":"What is the difference between float and double in C++?","label":"TIER_1_SIMPLE"}
+{"id":"b01_07","text":"Explain what a mutex is.","label":"TIER_1_SIMPLE"}
+{"id":"b01_08","text":"What header file defines std::size_t?","label":"TIER_1_SIMPLE"}
+{"id":"b01_09","text":"How to convert std::string to const char*?","label":"TIER_1_SIMPLE"}
+{"id":"b01_10","text":"What is the syntax for a lambda in C++11?","label":"TIER_1_SIMPLE"}
+{"id":"b01_11","text":"Rename Foo::process() to Foo::execute() across Foo.h, Foo.cpp, and all callers.","label":"TIER_2_MEDIUM"}
+{"id":"b01_12","text":"Refactor this C++ function into separate parsing and validation functions.","label":"TIER_2_MEDIUM"}
+{"id":"b01_13","text":"Rename a PostgreSQL column and update the affected application queries.","label":"TIER_2_MEDIUM"}
+{"id":"b01_14","text":"Replace logging calls across five C++ files with a Logger class.","label":"TIER_2_MEDIUM"}
+{"id":"b01_15","text":"Extract the HTTP header parsing loop into a separate helper class.","label":"TIER_2_MEDIUM"}
+{"id":"b01_16","text":"Update all deprecated calls to OldConfig::get() to use NewConfig::fetch().","label":"TIER_2_MEDIUM"}
+{"id":"b01_17","text":"Move the database connection pooling logic from main.cpp to DbManager.cpp.","label":"TIER_2_MEDIUM"}
+{"id":"b01_18","text":"Refactor UserSession to take an interface IAuthenticator instead of concrete Authenticator.","label":"TIER_2_MEDIUM"}
+{"id":"b01_19","text":"Convert this C-style struct and standalone functions into an encapsulated C++ class.","label":"TIER_2_MEDIUM"}
+{"id":"b01_20","text":"Fix the off-by-one boundary check in the CSV row parser loop.","label":"TIER_2_MEDIUM"}
+{"id":"b01_21","text":"Replace raw pointer member variables in WidgetManager with std::unique_ptr.","label":"TIER_2_MEDIUM"}
+{"id":"b01_22","text":"Diagnose an intermittent deadlock in a multithreaded C++ application.","label":"TIER_3_COMPLEX"}
+{"id":"b01_23","text":"Design a lock-free MPMC queue using atomics and explain the memory ordering.","label":"TIER_3_COMPLEX"}
+{"id":"b01_24","text":"Design a plugin architecture with dynamic loading and safe ABI/ownership boundaries.","label":"TIER_3_COMPLEX"}
+{"id":"b01_25","text":"Diagnose why a neural network becomes unstable after thousands of training iterations.","label":"TIER_3_COMPLEX"}
+{"id":"b01_26","text":"Implement a lock-free work-stealing deque based on Chase-Lev algorithm.","label":"TIER_3_COMPLEX"}
+{"id":"b01_27","text":"Design a distributed consensus mechanism resilient to 1/3 Byzantine failures.","label":"TIER_3_COMPLEX"}
+{"id":"b01_28","text":"Analyze cache thrashing and false sharing in this high-throughput ring buffer.","label":"TIER_3_COMPLEX"}
+{"id":"b01_29","text":"Formulate a lock-free RCU (Read-Copy Update) mechanism in user-space C++.","label":"TIER_3_COMPLEX"}
+{"id":"b01_30","text":"Design a memory allocator with slab and buddy algorithms minimizing fragmentation.","label":"TIER_3_COMPLEX"}
+{"id":"b01_31","text":"Prove memory safety and absence of data races in this custom hazard-pointer implementation.","label":"TIER_3_COMPLEX"}
+{"id":"b01_32","text":"Find and fix the deadlock caused by inconsistent mutex acquisition order across these four classes.","label":"TIER_3_COMPLEX"}

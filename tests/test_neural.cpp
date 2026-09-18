@@ -29,7 +29,7 @@ bool test_neural_overfits_toy_dataset() {
       {{0, 0.9f}, {1, 0.1f}}, {{2, 0.9f}}
   };
   std::vector<Tier> y = {
-      Tier::Tier1Simple, Tier::Tier2Refactor, Tier::Tier3Complex,
+      Tier::Tier1Simple, Tier::Tier2Medium, Tier::Tier3Complex,
       Tier::Tier1Simple, Tier::Tier3Complex
   };
 
