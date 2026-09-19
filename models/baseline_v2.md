@@ -1,4 +1,4 @@
-Config params used to train this model.
+Config params used to train `baseline_v2` model.
 No MLP is used inside `EmbeddedClassifier::classify`
 
 
