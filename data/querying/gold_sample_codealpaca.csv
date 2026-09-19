@@ -1,0 +1,75 @@
+id,source,text,model_label,human_label,notes
+codealpaca_0,codealpaca,"Given an array of strings and the task is to find the longest string from the given string array.
+[""Google"", ""Facebook"", ""Amazon"", ""Zapier"" ]",[TIER_1_SIMPLE],,
+codealpaca_1,codealpaca,"Given a character sequence, find the longest palindromic substring.
+sequence: madam",[TIER_1_SIMPLE],,
+codealpaca_2,codealpaca,"Design an algorithm to detect the pattern of spikes in an EEG.
+",[TIER_3_COMPLEX],[TIER_2_MEDIUM],
+codealpaca_3,codealpaca,"Detect if the given code is a loop or not and output true if it is a loop or false if it is not.
+x = 0
+while (x < 10):
+    x += 1",[TIER_1_SIMPLE],,
+codealpaca_4,codealpaca,"Create classes and interfaces to represent an online news system.
+",[TIER_2_MEDIUM],,
+codealpaca_5,codealpaca,"Suggest a way to edit the following text data using NLP techniques
+text = ""This is an exmaple""",[TIER_1_SIMPLE],,
+codealpaca_6,codealpaca,"Develop a program for HTML input validation
+",[TIER_2_MEDIUM],,
+codealpaca_7,codealpaca,"Develop a React Native application to display a list of recent news articles
+",[TIER_2_MEDIUM],,
+codealpaca_8,codealpaca,"Design a program that automatically refactors a python code to improve readability and reduce complexity.
+def myfunc():
+x = 1
+y = 5
+return x + y",[TIER_3_COMPLEX],,
+codealpaca_9,codealpaca,"Create two lists, one in Python and one in JavaScript, with 10 numbers each.
+",[TIER_1_SIMPLE],,
+codealpaca_10,codealpaca,"Suggest a way to generate random passwords using Python.
+",[TIER_1_SIMPLE],,
+codealpaca_11,codealpaca,"Create a HTML web page containing two boxes on a single line.
+",[TIER_1_SIMPLE],,
+codealpaca_12,codealpaca,"Build a machine learning model using scikit-learn to predict the house prices in Boston.
+- Number of rooms: 3 
+- Average number of rooms per dwelling: 6 
+- Proportion of residential land zoned for lots over 25,000 sq.ft: 0.4
+- Index of accessibility to radial highways: 4
+- Full-valuation property-tax rate per $10,000: 300",[TIER_2_MEDIUM],,
+codealpaca_13,codealpaca,"Implement a backtracking algorithm to solve a sudoku puzzle.
+[
+    [7, 8, 0, 4, 0, 0, 1, 2, 0],
+    [6, 0, 0, 0, 7, 5, 0, 0, 9],
+    [0, 0, 0, 6, 0, 1, 0, 7, 8],
+    [0, 0, 7, 0, 4, 0, 2, 6, 0],
+    [0, 0, 1, 0, 5, 0, 9, 3, 0],
+    [9, 0, 4, 0, 6, 0, 0, 0, 5],
+    [0, 7, 0, 3, 0, 0, 0, 1, 2],
+    [1, 2, 0, 0, 0, 7, 4, 0, 0],
+    [0, 4, 9, 2, 0, 6, 0, 0, 7]
+]",[TIER_3_COMPLEX],,
+codealpaca_14,codealpaca,"Train an AI model to predict whether an email is spam or not.
+",[TIER_3_COMPLEX],,
+codealpaca_15,codealpaca,"Given an array of integers and an integer value, figure out whether the given value is present in the array or not.
+Array: [1, 2, 3, 4, 5, 6]
+Value: 7",[TIER_1_SIMPLE],,
+codealpaca_16,codealpaca,"Create a Visual Studio Code extension that provides auto-complete features for a specific language.
+",[TIER_2_MEDIUM],,
+codealpaca_17,codealpaca,"Write a code to infer the data type of an lambda expression.
+",[TIER_3_COMPLEX],[TIER_2_MEDIUM],
+codealpaca_18,codealpaca,"Request the average temperature of the city 'Boston' from the Weather API.
+",[TIER_1_SIMPLE],,
+codealpaca_19,codealpaca,"Develop a machine learning algorithm to predict stock prices.
+Historical stock prices",[TIER_3_COMPLEX],,
+codealpaca_20,codealpaca,"Create an array of strings for the given string and return only the strings with a length equal to or greater than 5.
+""This is a string of words to test""",[TIER_1_SIMPLE],,
+codealpaca_21,codealpaca,"Given a string, find the longest substring containing no repeated characters.
+""abcabcbb""",[TIER_3_COMPLEX],,
+codealpaca_22,codealpaca,"Write a function to detect the smallest window in a string containing all characters of another string.
+string1 = ""abcde"", string2 = ""ade""",[TIER_3_COMPLEX],[TIER_2_MEDIUM],
+codealpaca_23,codealpaca,"Identify the data type for the value in the given statement.
+value = 2 / 3",[TIER_1_SIMPLE],,
+codealpaca_24,codealpaca,"Modify the following Java code to print the second element in a given array.
+int[] arr = {1, 2, 3, 4, 5};",[TIER_1_SIMPLE],,
+codealpaca_25,codealpaca,"Design an interactive game using HTML, CSS and JavaScript.
+",[TIER_2_MEDIUM],,
+codealpaca_26,codealpaca,"Using inspect module to count the number of lines of code in a module.
+",[TIER_1_SIMPLE],,

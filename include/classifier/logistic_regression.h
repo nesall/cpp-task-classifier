@@ -16,6 +16,7 @@ namespace classifier {
     size_t batch_size{ 32 };
     uint64_t random_seed{ 42 };
     bool verbose{ false };
+    std::array<float, 3> class_weights{ 1.0f, 1.0f, 1.0f };  // per-tier loss/gradient multiplier
   };
 
   class LogisticRegression {
@@ -44,11 +45,7 @@ namespace classifier {
     );
 
     // Evaluate cross-entropy loss over a dataset
-    [[nodiscard]] float compute_loss(
-      const std::vector<SparseVector> &X,
-      const std::vector<Tier> &y,
-      float l2_reg = 0.0f
-    ) const;
+    [[nodiscard]] float compute_loss(const std::vector<SparseVector> &X, const std::vector<Tier> &y, float l2_reg = 0, std::array<float, 3> clsw = { 1.f,1.f,1.f }) const;
 
     // Direct parameter inspection (for tests & feature weight analysis)
     [[nodiscard]] float get_weight(size_t class_idx, size_t feature_idx) const;

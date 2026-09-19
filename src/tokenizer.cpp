@@ -54,6 +54,7 @@ namespace classifier {
   void Tokenizer::split_and_append_subwords(std::string_view token, std::vector<std::string> &out) const {
     if (!options_.split_camel_case || token.empty()) return;
 
+    bool did_split = false;
     size_t start = 0;
     for (size_t i = 1; i < token.size(); ++i) {
       bool is_snake = (token[i] == '_');
@@ -61,6 +62,7 @@ namespace classifier {
         !std::isupper(static_cast<unsigned char>(token[i - 1]));
 
       if (is_snake || is_camel) {
+        did_split = true;
         if (i > start) {
           std::string_view sub = token.substr(start, i - start);
           if (sub != "_") {
@@ -74,7 +76,8 @@ namespace classifier {
       }
     }
 
-    if (start < token.size()) {
+    // Only emit the remainder if at least one delimiter was encountered
+    if (did_split && start < token.size()) {
       std::string_view sub = token.substr(start);
       if (sub != "_") {
         std::string s = options_.lowercase ? to_lower(sub) : std::string(sub);
@@ -116,12 +119,24 @@ namespace classifier {
 
         if (options_.split_camel_case) {
           size_t sub_start = 0;
+          bool has_scope = (raw.find("::") != std::string_view::npos);
+
           while (sub_start < raw.size()) {
             size_t scope_pos = raw.find("::", sub_start);
             std::string_view part = (scope_pos == std::string_view::npos)
               ? raw.substr(sub_start)
               : raw.substr(sub_start, scope_pos - sub_start);
 
+            // If it came from a scoped identifier (e.g., "vector" from "std::vector"),
+            // emit the part itself as a subword token
+            if (has_scope && !part.empty()) {
+              std::string part_lower = options_.lowercase ? to_lower(part) : std::string(part);
+              if (!is_stop_word(part_lower)) {
+                subwords.push_back(std::move(part_lower));
+              }
+            }
+
+            // Further split any camelCase or snake_case inside the part
             split_and_append_subwords(part, subwords);
 
             if (scope_pos == std::string_view::npos) break;
@@ -175,16 +190,21 @@ namespace classifier {
       }
     }
 
-    // 2. Emit bigrams with a reusable scratch string to avoid continuous allocations
-    if (options_.ngram_max >= 2 && seq_len >= 2) {
+    // 2. Emit n-grams (bigrams, trigrams, etc.) respecting ngram_min and ngram_max
+    for (size_t n_gram = std::max<size_t>(2, options_.ngram_min);
+      n_gram <= static_cast<size_t>(options_.ngram_max);
+      ++n_gram) {
+      if (seq_len < n_gram) break;
+
       std::string scratch;
       scratch.reserve(64);
 
-      for (size_t idx = 0; idx < seq_len - 1; ++idx) {
+      for (size_t idx = 0; idx <= seq_len - n_gram; ++idx) {
         scratch.clear();
-        scratch.append(sequence[idx]);
-        scratch.push_back('_');
-        scratch.append(sequence[idx + 1]);
+        for (size_t k = 0; k < n_gram; ++k) {
+          if (k > 0) scratch.push_back('_');
+          scratch.append(sequence[idx + k]);
+        }
         final_tokens.push_back(scratch);
       }
     }

@@ -1,4 +1,6 @@
 #include "classifier/model.h"
+#include "classifier/types.h"
+#include <string>
 #include <cmath>
 #include <sstream>
 

@@ -123,10 +123,14 @@ bool test_tokenizer_filters_stop_words() {
     return false;
   }
 
-  // Code & domain terms preserved
-  if (!has_token("std::move") || !has_token("move") || !has_token("c++")) {
+  // Code & domain terms preserved: "std::move", "c", "++"
+  if (!has_token("std::move") || !has_token("c") || !has_token("++")) {
     return false;
   }
+
+  tokens = tokenizer.tokenize("Explain that.");
+  if (has_token("that")) return false;
+  if (tokens.size() != 1 || tokens[0] != "explain") return false;
 
   return true;
 }

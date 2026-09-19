@@ -94,11 +94,7 @@ namespace classifier {
     return static_cast<Tier>(best_idx);
   }
 
-  float LogisticRegression::compute_loss(
-    const std::vector<SparseVector> &X,
-    const std::vector<Tier> &y,
-    float l2_reg
-  ) const
+  float LogisticRegression::compute_loss(const std::vector<SparseVector> &X, const std::vector<Tier> &y, float l2_reg, std::array<float, 3> clsw) const
   {
     if (X.empty() || X.size() != y.size()) {
       return 0.0f;
@@ -115,7 +111,7 @@ namespace classifier {
 
       auto target_k = static_cast<size_t>(y[i]);
       if (target_k < 3) {
-        total_ce += (log_sum_exp - static_cast<double>(logits[target_k]));
+        total_ce += clsw[target_k] * (log_sum_exp - static_cast<double>(logits[target_k]));
       }
     }
 
@@ -132,11 +128,7 @@ namespace classifier {
     return static_cast<float>(loss);
   }
 
-  void LogisticRegression::train(
-    const std::vector<SparseVector> &X,
-    const std::vector<Tier> &y,
-    const TrainConfig &config
-  )
+  void LogisticRegression::train(const std::vector<SparseVector> &X, const std::vector<Tier> &y, const TrainConfig &config)
   {
     if (X.empty() || X.size() != y.size()) return;
 
@@ -177,6 +169,8 @@ namespace classifier {
           if (target_k < 3) {
             errors[target_k] -= 1.0f;
           }
+          float w = config.class_weights[target_k < 3 ? target_k : 0];
+          for (size_t k = 0; k < 3; ++k) errors[k] *= w;
 
           // Bias gradient
           grad_b[0] += errors[0];
@@ -221,7 +215,7 @@ namespace classifier {
       }
 
       if (config.verbose && (epoch + 1) % 10 == 0) {
-        float loss = compute_loss(X, y, config.l2_reg);
+        float loss = compute_loss(X, y, config.l2_reg, config.class_weights);
         std::cout << "Epoch " << (epoch + 1) << "/" << config.epochs
           << " - Loss: " << loss << "\n";
       }

@@ -29,11 +29,42 @@ namespace classifier {
       return { Tier::Unknown, {0.0f, 0.0f, 0.0f}, 0.0f };
     }
 
-    std::vector<std::string> tokens = tokenizer_->tokenize(text);
+    auto tokens = tokenizer_->tokenize(text);
+
+    if (tokens.empty()) {
+      if (session_context != Tier::Unknown) {
+        return ClassificationResult{
+            .predicted_tier = session_context,
+            .probabilities = {
+                session_context == Tier::Tier1Simple ? 1.0f : 0.0f,
+                session_context == Tier::Tier2Medium ? 1.0f : 0.0f,
+                session_context == Tier::Tier3Complex ? 1.0f : 0.0f
+            },
+            .confidence = 1.0f
+        };
+      }
+      return ClassificationResult{
+          .predicted_tier = Tier::Tier1Simple,
+          .probabilities = {1.0f, 0.0f, 0.0f},
+          .confidence = 1.0f
+      };
+    }
+
+
     SparseVector x = tfidf_.transform(tokens, vocab_);
 
     // 1. Get raw scores from the linear model
     std::array<float, 3> logits = lr_.predict_raw_scores(x);
+
+    //// 1b. Add MLP correction when ResidualMLP is selected
+    // MLP makes it worse.
+    //if (model_type_ == ModelType::ResidualMLP) {
+    //  float alpha = 0.2f;
+    //  std::vector<float> hidden;
+    //  std::array<float, 3> mlp_logits;
+    //  mlp_.forward(x, hidden, mlp_logits);
+    //  for (size_t k = 0; k < 3; ++k) logits[k] += alpha * mlp_logits[k];
+    //}
 
     // 2a. Standalone Query Length Prior
     float length_factor = std::clamp((static_cast<float>(tokens.size()) - 10.0f) / 40.0f, 0.0f, 1.0f);
@@ -60,12 +91,21 @@ namespace classifier {
 
     // 2d. Session Context Inheritance (Decays as query gets longer)
     if (session_context != Tier::Unknown) {
-      float context_weight = std::max(0.0f, 1.0f - (tokens.size() / 15.0f));
-      float context_boost = 2.5f * context_weight;
-
-      if (session_context == Tier::Tier1Simple) logits[0] += context_boost;
-      else if (session_context == Tier::Tier2Medium) logits[1] += context_boost;
-      else if (session_context == Tier::Tier3Complex) logits[2] += context_boost;
+      float context_weight = std::max(0.0f, 1.0f - (static_cast<float>(tokens.size()) / 15.0f));
+      float boostFactor = 2.5f;
+      // If ultra-short and continuing a session, the raw lexical signal is high-variance
+      // conversational filler. Shrink raw logits toward zero before applying the context prior.
+      const size_t ultraShortThreshold = 3;
+      if (tokens.size() <= ultraShortThreshold) {
+        float shrink_factor = 0.25f;
+        for (float &l : logits) {
+          l *= shrink_factor;
+        }
+        boostFactor += (ultraShortThreshold - tokens.size()) * 0.3f;
+      }
+      size_t target_idx = static_cast<size_t>(session_context);
+      float context_boost = boostFactor * context_weight;
+      logits[target_idx] += context_boost;
     }
 
     // 3. Standard Softmax

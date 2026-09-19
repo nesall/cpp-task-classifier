@@ -109,24 +109,39 @@ for lbl, c in counts.items():
 
 # 5. Balance Classes and Create 70 / 15 / 15 Splits
 # TIER_2_MEDIUM is the bottleneck at 1,741 samples
-target_per_class = min(counts.min(), 1740)
-print(f"\nSampling {target_per_class} per class for a balanced dataset of {target_per_class * 3} samples...")
+#target_per_class = min(counts.min(), 1740)
+#print(f"\nSampling {target_per_class} per class for a balanced dataset of {target_per_class * 3} samples...")
+#balanced_dfs = []
+#for lbl in ["TIER_1_SIMPLE", "TIER_2_MEDIUM", "TIER_3_COMPLEX"]:
+#    tier_subset = df[df["label"] == lbl].sample(n=target_per_class, random_state=42)
+#    balanced_dfs.append(tier_subset)
 
-balanced_dfs = []
-for lbl in ["TIER_1_SIMPLE", "TIER_2_MEDIUM", "TIER_3_COMPLEX"]:
-    tier_subset = df[df["label"] == lbl].sample(n=target_per_class, random_state=42)
-    balanced_dfs.append(tier_subset)
+#clean_pool = pd.concat(balanced_dfs).sample(frac=1.0, random_state=42).reset_index(drop=True)
 
-
-clean_pool = pd.concat(balanced_dfs).sample(frac=1.0, random_state=42).reset_index(drop=True)
+# 5. Use full reconciled dataset (no undersampling) - stratified 70/15/15 split
+clean_pool = df.sample(frac=1.0, random_state=42).reset_index(drop=True)
+print(f"\nUsing full reconciled dataset: {len(clean_pool)} samples (no class balancing).")
 
 total_n = len(clean_pool)
 n_train = int(total_n * 0.70)
 n_val = int(total_n * 0.15)
 
-train_df = clean_pool.iloc[:n_train]
-val_df = clean_pool.iloc[n_train:n_train + n_val]
-test_df = clean_pool.iloc[n_train + n_val:]
+#train_df = clean_pool.iloc[:n_train]
+#val_df = clean_pool.iloc[n_train:n_train + n_val]
+#test_df = clean_pool.iloc[n_train + n_val:]
+train_dfs, val_dfs, test_dfs = [], [], []
+for lbl in ["TIER_1_SIMPLE", "TIER_2_MEDIUM", "TIER_3_COMPLEX"]:
+    subset = clean_pool[clean_pool["label"] == lbl].sample(frac=1.0, random_state=42).reset_index(drop=True)
+    n = len(subset)
+    n_tr = int(n * 0.70)
+    n_va = int(n * 0.15)
+    train_dfs.append(subset.iloc[:n_tr])
+    val_dfs.append(subset.iloc[n_tr:n_tr + n_va])
+    test_dfs.append(subset.iloc[n_tr + n_va:])
+
+train_df = pd.concat(train_dfs).sample(frac=1.0, random_state=42).reset_index(drop=True)
+val_df = pd.concat(val_dfs).sample(frac=1.0, random_state=42).reset_index(drop=True)
+test_df = pd.concat(test_dfs).sample(frac=1.0, random_state=42).reset_index(drop=True)
 
 for split_name, split_data in [("train", train_df), ("val", val_df), ("test", test_df)]:
     out_path = OUT_DIR / f"{split_name}.jsonl"
