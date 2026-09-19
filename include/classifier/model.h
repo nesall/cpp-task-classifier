@@ -41,6 +41,7 @@ namespace classifier {
 
   class EmbeddedClassifier final : public IClassifier {
   public:
+    // ctor params will be overwritten by load methods.
     explicit EmbeddedClassifier(
       ModelType model_type = ModelType::Linear,
       TokenizerOptions tokenizer_opts = {},

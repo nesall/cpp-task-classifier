@@ -6,7 +6,7 @@
 namespace classifier {
 
   static constexpr uint32_t PIPELINE_MAGIC = 0x54494552; // 'TIER'
-  static constexpr uint32_t PIPELINE_VERSION = 1;
+  static constexpr uint32_t PIPELINE_VERSION = 2;
 
   EmbeddedClassifier::EmbeddedClassifier(
     ModelType model_type,
@@ -217,6 +217,13 @@ namespace classifier {
     uint32_t ngram_max = static_cast<uint32_t>(tokenizer_options_.ngram_max);
     os.write(reinterpret_cast<const char *>(&ngram_min), sizeof(ngram_min));
     os.write(reinterpret_cast<const char *>(&ngram_max), sizeof(ngram_max));
+    uint8_t lowercase = tokenizer_options_.lowercase ? 1 : 0;
+    uint8_t split_camel_case = tokenizer_options_.split_camel_case ? 1 : 0;
+    uint8_t preserve_operators = tokenizer_options_.preserve_operators ? 1 : 0;
+    os.write(reinterpret_cast<const char *>(&lowercase), sizeof(lowercase));
+    os.write(reinterpret_cast<const char *>(&split_camel_case), sizeof(split_camel_case));
+    os.write(reinterpret_cast<const char *>(&preserve_operators), sizeof(preserve_operators));
+
 
     // Save Logistic Regression weights
     lr_.save(os);
@@ -226,6 +233,9 @@ namespace classifier {
     if (model_type_ == ModelType::ResidualMLP) {
       mlp_.save(os);
     }
+
+    // Save classification thresholds (POD struct of 6 floats, no padding)
+    os.write(reinterpret_cast<const char *>(&thresholds_), sizeof(ClassificationThresholds));
   }
 
   void EmbeddedClassifier::load(std::istream &is)
@@ -278,6 +288,15 @@ namespace classifier {
     is.read(reinterpret_cast<char *>(&ngram_max), sizeof(ngram_max));
     tokenizer_options_.ngram_min = static_cast<size_t>(ngram_min);
     tokenizer_options_.ngram_max = static_cast<size_t>(ngram_max);
+    uint8_t lowercase = 0;
+    uint8_t split_camel_case = 0;
+    uint8_t preserve_operators = 0;
+    is.read(reinterpret_cast<char *>(&lowercase), sizeof(lowercase));
+    is.read(reinterpret_cast<char *>(&split_camel_case), sizeof(split_camel_case));
+    is.read(reinterpret_cast<char *>(&preserve_operators), sizeof(preserve_operators));
+    tokenizer_options_.lowercase = (lowercase != 0);
+    tokenizer_options_.split_camel_case = (split_camel_case != 0);
+    tokenizer_options_.preserve_operators = (preserve_operators != 0);
     tokenizer_ = std::make_unique<Tokenizer>(tokenizer_options_);
 
     // Load model weights
@@ -289,6 +308,9 @@ namespace classifier {
     if (model_type_ == ModelType::ResidualMLP) {
       mlp_.load(is);
     }
+
+    // Load classification thresholds
+    is.read(reinterpret_cast<char *>(&thresholds_), sizeof(ClassificationThresholds));
   }
 
   bool EmbeddedClassifier::save_to_file(std::string_view filepath) const

@@ -112,7 +112,7 @@ int main(int argc, char *argv[]) {
   fs::path val_path = RootDir / "data/processed/val.jsonl";
   fs::path test_path = RootDir / "data/processed/test.jsonl";
   fs::path bench_path = RootDir / "data/benchmarks/benchmark_v0.1.jsonl";
-  fs::path out_model = RootDir / "models/baseline_v1.bin";
+  fs::path out_model = RootDir / "models/baseline_v2.bin";
 
   if (argc >= 2) train_path = argv[1];
   if (argc >= 3) val_path = argv[2];
